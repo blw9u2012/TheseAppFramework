@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/sitePagelayout"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+    <TextView 
+        android:id="@+id/siteTitle"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Site 1" />
+	
+	<TextView 
+        android:id="@+id/siteLocation"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Location" />
+	
+	<TextView 
+        android:id="@+id/siteInformation"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="A bunch of information about a specific site that is going to change for each site or
+        point of interest that the user clicks on" />
+</LinearLayout>

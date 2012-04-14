@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/mainPageFullLinLayout"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:layout_gravity="center_vertical"
+    android:orientation="vertical" >
+    
+    <TextView
+        android:id="@+id/tour_title"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center"
+        android:gravity="center_horizontal"
+        android:text="Tour Application"
+        android:textSize="25sp"
+        android:textColor="#00BFFF"
+        android:shadowColor="#FF8C00"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="1.5" />
+    
+        <ImageView
+        	android:id="@+id/imageView1"
+        	android:layout_width="match_parent"
+        	android:layout_height="210dp"
+        	android:src="@drawable/uva11" />
+    
+
+    <RelativeLayout
+        android:id="@+id/mainPagelayout"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:gravity="top"
+        android:orientation="vertical"
+        android:layout_alignParentTop="true">
+
+            <LinearLayout
+                android:id="@+id/siteList"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@+id/site1"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Site 1 Example" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/mapButton"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:text="Show Map!" />
+
+            <LinearLayout
+                android:id="@+id/buttonRow"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal" >
+
+                <Button
+                    android:id="@+id/tourButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Tours!" />
+
+                <Button
+                    android:id="@+id/siteButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Sites!" />
+            </LinearLayout>
+
+    </RelativeLayout>
+
+</LinearLayout>

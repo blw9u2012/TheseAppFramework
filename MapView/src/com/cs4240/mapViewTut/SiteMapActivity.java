@@ -36,7 +36,7 @@ public class SiteMapActivity extends MapActivity{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.site_map);
 		map = (MapView)findViewById(R.id.siteMapView);
-		d = getResources().getDrawable(R.drawable.androidmarker);
+		d = getResources().getDrawable(R.drawable.marker_orange);
 		controller = map.getController();
 		mapOverlayList = map.getOverlays();
 		manager = (LocationManager)this.getSystemService(LOCATION_SERVICE);
@@ -87,7 +87,7 @@ public class SiteMapActivity extends MapActivity{
 
 				GeoPoint point = new GeoPoint(latitude, longitude);
 				controller.animateTo(point);
-				controller.setZoom(15);
+				//controller.setZoom(15);
 				}
 
 			@Override
@@ -108,7 +108,7 @@ public class SiteMapActivity extends MapActivity{
 		// Register the listener with the Location Manager to receive location
 		// updates...
 		manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0,
-				0, locationListener);
+				100, locationListener);
 		
 		for(int i = 0; i < sites.size(); i++){
 			Site poi = sites.get(i);
@@ -132,7 +132,6 @@ public class SiteMapActivity extends MapActivity{
 
 	@Override
 	protected void onResume() {
-		
 		myLocation.enableMyLocation();
 		super.onResume();
 	}

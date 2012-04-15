@@ -17,6 +17,9 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
@@ -28,7 +31,11 @@ public class SiteListActivity extends Activity {
 	/** Called when the activity is first created. */
 	String places;
 	ArrayList<Site> siteList;
-
+	LocationManager manager;
+	Location location;
+	double lng, lat;
+	ArrayList<NameValuePair> nvp;
+	
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.sitelist);
@@ -37,7 +44,16 @@ public class SiteListActivity extends Activity {
 
 		siteList = siteManager.getSiteList();
 
+		//get user's location...
+		manager = (LocationManager)this.getSystemService(LOCATION_SERVICE);
+		Criteria crit = new Criteria();
+		String provider = manager.getBestProvider(crit, true);
+		location = manager.getLastKnownLocation(provider);
+		
+		
 		Button showSiteMapButton = (Button)findViewById(R.id.showPlacesOnMapButton);
+		Button placesSearchButton = (Button)findViewById(R.id.placesSearchButton);
+		
 		showSiteMapButton.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -48,11 +64,33 @@ public class SiteListActivity extends Activity {
 			}
 			
 		});
+		
+		placesSearchButton.setOnClickListener(new OnClickListener(){
+			//TODO need to fix this...
+			@Override
+			public void onClick(View v) {
+				//execute a places search around the user's current location..
+				lat = location.getLatitude();
+				lng = location.getLongitude();
+				String latitude = String.valueOf(lat);
+				String longitude = String.valueOf(lng);
+				siteList.clear();
+				nvp = new ArrayList<NameValuePair>();
+				PlaceSearch ps = new PlaceSearch(nvp);
+				ps.execute(latitude,longitude);
+			}
+			
+		});
 
 		//execute a places search around the user's current location..
-		ArrayList<NameValuePair> nvp = new ArrayList<NameValuePair>();
+		lat = location.getLatitude();
+		lng = location.getLongitude();
+		String latitude = String.valueOf(lat);
+		String longitude = String.valueOf(lng);
+		
+		nvp = new ArrayList<NameValuePair>();
 		PlaceSearch ps = new PlaceSearch(nvp);
-		ps.execute("38.0395", "-78.5079");
+		ps.execute(latitude,longitude);
 
 		
 	}

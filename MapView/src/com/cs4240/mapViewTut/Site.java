@@ -26,7 +26,9 @@ public class Site implements Parcelable {
     } 
 	
 	
-    
+    public Site(String name){
+    	this.name = name;
+    }
     
     public Site(double latitude, double longitude, String vicinity,double rating, String name, String reference,
 			String id) {

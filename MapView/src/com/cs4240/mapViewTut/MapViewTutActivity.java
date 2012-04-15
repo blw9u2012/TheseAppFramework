@@ -1,8 +1,9 @@
 package com.cs4240.mapViewTut;
 
 import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
@@ -31,6 +32,10 @@ import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.MotionEvent;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,33 +50,46 @@ import com.google.android.maps.Projection;
 
 public class MapViewTutActivity extends MapActivity {
 
+	//Overlays...
 	List<Overlay> mapOverlayList;
 	MyLocationOverlay myLocationOverlay;
+	MyLocationOverlay compass;
+	
+	//Icons for the maps...
 	Drawable drawable;
 	CustomPinpointList customPinpointList;
-	MyLocationOverlay compass;
+	
+	//Views...
+	MapView mv;
+	TextView tv;
+	EditText et;
+	Button searchButton;
+	
+	//Map objects...
 	MapController controller;
 	private int longitude, latitude;
 	GeoPoint touchPoint, begin, end;
-	MapView mv;
-	TextView tv;
 	LocationManager locationManager;
 	LocationListener locationListener;
 	Location location;
 	Projection projection;
 
+	//pairs of lat and long points for giving directions...
 	String[] pairs;
+	SiteManager siteManager;
+	
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
-
+		siteManager = SiteManager.getInstance();
+		
 		// grab ui from layout file...
 		mv = (MapView) findViewById(R.id.mapview);
-		tv = (TextView) findViewById(R.id.mainTextView);
-		tv.setText("Location is...:");
-
+	    searchButton = (Button)findViewById(R.id.searchButton);
+	    et = (EditText)findViewById(R.id.searchBar);
+		
 		// configure map...
 		mv.setBuiltInZoomControls(true);
 		controller = mv.getController();
@@ -79,7 +97,6 @@ public class MapViewTutActivity extends MapActivity {
 		
 		// the list of overlays that the mapview is keeping track of...
 		mapOverlayList = mv.getOverlays();
-
 		Touch t = new Touch();
 		mapOverlayList.add(t);
 
@@ -88,7 +105,8 @@ public class MapViewTutActivity extends MapActivity {
 		mapOverlayList.add(compass);
 
 		// get android marker and add it to the list of overlay objects...
-		drawable = this.getResources().getDrawable(R.drawable.androidmarker);
+		//drawable = this.getResources().getDrawable(R.drawable.androidmarker);
+		drawable = this.getResources().getDrawable(R.drawable.marker_orange);
 		
 		customPinpointList = new CustomPinpointList(drawable,MapViewTutActivity.this);
 
@@ -125,7 +143,7 @@ public class MapViewTutActivity extends MapActivity {
 			customPinpointList.insertPinpointOverlayItem(item);
 			mapOverlayList.add(customPinpointList);
 		}
-		tv.setText("Location: " + latitude + ", " + longitude);
+		//tv.setText("Location: " + latitude + ", " + longitude);
 
 		// Define a listener that responds to location updates...
 		locationListener = new LocationListener() {
@@ -136,7 +154,7 @@ public class MapViewTutActivity extends MapActivity {
 				// provider
 				latitude = (int)(location.getLatitude()*1E6);
 				longitude = (int)(location.getLongitude()*1E6);
-				tv.setText("Latitude: "+latitude+", Longitude: "+longitude);
+				//tv.setText("Latitude: "+latitude+", Longitude: "+longitude);
 				GeoPoint point = new GeoPoint(latitude, longitude);
 				controller.animateTo(point);
 				controller.setZoom(15);
@@ -163,80 +181,13 @@ public class MapViewTutActivity extends MapActivity {
 
 		};
 		
-		new GetDirections().execute("Charlottesville,VA","Washington,D.C.");
-		//lat and long points....
-		//pairs = getDirections("38.0395,78.5079","38.8900,77.0300");
-/*		String[] lnglat = pairs[0].split(",");
-		
-		//Starting point...
-		GeoPoint startingPoint = new GeoPoint((int)(Double.parseDouble(lnglat[1]) * 1E6),(int)(Double.parseDouble(lnglat[0]) * 1E6));
-		begin = startingPoint;
-		controller.setCenter(begin);
-		controller.setZoom(17);
-		mapOverlayList.add(new RouteOverlay(startingPoint, startingPoint));
-		
-		//navigate the path...
-		GeoPoint gp1;
-		GeoPoint gp2 = begin;
-		
-		for(int i = 1; i < pairs.length; i++){
-			lnglat = pairs[i].split(",");
-			gp1 = gp2;
-			
-			gp2 = new GeoPoint((int)(Double.parseDouble(lnglat[1]) * 1E6),(int)(Double.parseDouble(lnglat[0]) * 1E6));
-			mapOverlayList.add(new RouteOverlay(gp1,gp2));
-		}
-		
-		mapOverlayList.add(new RouteOverlay(gp2,gp2));
-		controller.animateTo(begin);*/
-		
+		//If the user wants directions give them to him or her..
+		// TODO Get the user's current location and desired location if they press the search button...
+		//new GetDirections().execute(location.getLatitude()+","+location.getLongitude(),"Washington,D.C.");
 	}
-	/*private String[] getDirections(String source, String dest){
-		String urlString =  "http://maps.google.com/maps?f=d&hl=en&saddr="
-				   + source + "&daddr=" + dest
-				   + "&ie=UTF8&0&om=0&output=kml";
-		
-		Document doc = null;
-		HttpURLConnection connection = null;
-		URL url = null;
-		String pathContent = "";
-		
-		try {
-			url = new URL(urlString.toString());
-			connection = (HttpURLConnection)url.openConnection();
-			connection.setRequestMethod("GET");
-			connection.setDoOutput(true);
-			connection.setDoInput(true);
-			connection.connect();
-			
-			//start parsing the response
-			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-			DocumentBuilder db = dbf.newDocumentBuilder();
-			doc = db.parse(connection.getInputStream());
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		NodeList n1 = doc.getElementsByTagName("LineString");
-		for(int i = 0; i < n1.getLength(); i++){
-			Node rootNode = n1.item(i);
-			NodeList configItems = rootNode.getChildNodes();
-
-			for(int j = 0; j < configItems.getLength(); j++){
-				Node lineStringNode = configItems.item(j);
-				NodeList path = lineStringNode.getChildNodes();
-				pathContent = path.item(0).getNodeValue();
-			}
-		}
-		String[] tempContent = pathContent.split(" ");
-		return tempContent;
-	
-	}*/
 
 	@Override
 	protected void onPause() {
-		// TODO Auto-generated method stub
 		compass.disableCompass();
 		myLocationOverlay.disableMyLocation();
 		locationManager.removeUpdates(locationListener);
@@ -249,6 +200,26 @@ public class MapViewTutActivity extends MapActivity {
 		// Register the listener with the Location Manager to receive location updates...
 		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0,	100, locationListener);
 		myLocationOverlay.enableMyLocation();
+		
+		searchButton.setOnClickListener(new OnClickListener(){
+
+			@Override
+			public void onClick(View v) {
+				String searchText = et.getText().toString();
+				ArrayList<Site> siteList = siteManager.getSiteList();
+				Comparator<Site> c = new Comparator<Site>(){
+
+					@Override
+					public int compare(Site s1, Site s2) {
+						return s1.getName().compareTo(s2.getName());
+					}
+					
+				};
+				int index = Collections.binarySearch(siteList, new Site(searchText),c);
+				Toast.makeText(getApplicationContext(), searchText, Toast.LENGTH_LONG);
+			}
+			
+		});
 		super.onResume();
 	}
 
@@ -365,17 +336,9 @@ public class MapViewTutActivity extends MapActivity {
 					   + "&ie=UTF8&0&om=0&output=kml";
 			
 			Document doc = null;
-			HttpURLConnection connection = null;
-			URL url = null;
 			String pathContent = "";
 			
 			try {
-				/*url = new URL(urlString.toString());
-				connection = (HttpURLConnection)url.openConnection();
-				connection.setRequestMethod("GET");
-				connection.setDoOutput(true);
-				connection.setDoInput(true);
-				connection.connect();*/
 				HttpClient client = new DefaultHttpClient();
 				HttpGet get = new HttpGet(urlString);
 				HttpResponse response = client.execute(get);
